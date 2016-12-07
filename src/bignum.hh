@@ -166,7 +166,7 @@ public:
 
 private:
   std::size_t base_;
-  //index_t nb_digits_;
+  // index_t nb_digits_;
   digits_t digits_;
   bool positive_;
 };
