@@ -26,9 +26,9 @@ public:
   /// This class.
   using self_t = BigNum;
   /// Shared pointer to this class.
-  using self_ptr_t = std::shared_ptr<self_t*>;
+  using self_ptr_t = std::shared_ptr<BigNum>;
   /// Const shared pointer to this class.
-  using const_self_ptr_t = const std::shared_ptr<BigNum*>;
+  using const_self_ptr_t = const std::shared_ptr<BigNum>;
 
   /// Type of the digit container.
   using digits_t = std::vector<digit_t>;
@@ -165,6 +165,13 @@ public:
   explicit operator bool() const;
 
 private:
+  void shrink();
+  self_t abs() const;
+  void check_same_base(const self_t& other) const;
+  self_t raw_add(const self_t& other) const;
+  self_t raw_sub(const self_t& other) const;
+  T get_value(index_t i) const;
+
   std::size_t base_;
   // index_t nb_digits_;
   digits_t digits_;

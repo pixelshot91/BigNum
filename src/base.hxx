@@ -1,9 +1,16 @@
 #pragma once
 
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 namespace bistro
 {
+template <typename value_t, typename char_t>
+Base<value_t, char_t>::Base()
+{
+}
+
 template <typename value_t, typename char_t>
 Base<value_t, char_t>::Base(std::initializer_list<char_t> list)
 {
@@ -46,19 +53,26 @@ template <typename value_t, typename char_t>
 char_t Base<value_t, char_t>::get_digit_representation(value_t i) const
 {
   if (i >= digits_repr_.size())
-    throw std::out_of_range("The value is not in the base");
+  {
+    std::stringstream ss;
+    ss << "The value " << i << " has no represention in this base of length "
+       << get_base_num();
+    throw std::out_of_range(ss.str());
+  }
   return digits_repr_[i];
 }
 
 template <typename value_t, typename char_t>
 value_t Base<value_t, char_t>::get_char_value(char_t r) const
 {
-  auto it =
-    find(digits_repr_.begin(), digits_repr_.end(), r) != digits_repr_.end();
+  auto it = find(digits_repr_.begin(), digits_repr_.end(), r);
   if (it == digits_repr_.end())
-    throw std::out_of_range(
-      std::string("Symbol ") + std::string(r) +
-      std::string(" is not the representation of any symbol of the base"));
+  {
+    std::stringstream ss;
+    ss << "Symbol " << r
+       << " is not the representation of any symbol of the base";
+    throw std::out_of_range(ss.str());
+  }
   return it - digits_repr_.begin();
 }
 }
