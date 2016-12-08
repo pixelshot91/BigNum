@@ -27,7 +27,7 @@ public:
   /// to add/delete those.
   using node_t = std::shared_ptr<ASTNode>;
 
-  virtual ~ASTNode();
+  //virtual ~ASTNode();
 
   /// Print the tree in infix notation, e.g. "(2+3)".
   virtual std::ostream& print_infix(std::ostream& out,

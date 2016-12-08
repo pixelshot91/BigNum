@@ -35,7 +35,7 @@ class ASTFactory
   /// Base.
   using base_t = Base;
   /// Pointer to AST node.
-  using node_t = ASTNode<BigNum, Base>*;
+  using node_t = std::shared_ptr<ASTNode<BigNum, Base>>;
   /// Character representation support for a digit.
   using char_t = typename base_t::char_t;
 
@@ -92,6 +92,9 @@ class ASTFactory
 
 private:
   tokens_t lexer(std::ifstream& in, const base_t& b);
+  node_t parse_expr(tokens_t& tokens);
+  node_t parse_term(tokens_t& tokens);
+
 };
 }
 

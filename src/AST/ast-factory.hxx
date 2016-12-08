@@ -47,19 +47,31 @@ typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::read_AST(std
     else
       std::cout << "UNDIFINED ";
   }*/
-  /*auto ast = parse_expr(in);
-  return ast;*/
+  auto ast = parse_expr(tokens);
+  return ast;
 }
 
-/*template <typename BigNum, typename Base>
-typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_expr(v_token_t tokens)
+template <typename BigNum, typename Base>
+typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_expr(tokens_t& tokens)
 {
-  auto term_1 = parse_term(tokens);
-  if (in.peek() == '+')
-    eat('+')
+  node_t term = parse_term(tokens); //
 
-}*/
+  if (std::get<Token_id>(tokens.front()) == PLUS)
+    throw "addition";//eat('+');
+  else if (std::get<Token_id>(tokens.front()) == MINUS)
+    throw "sub"; //eat('-');
+  else
+    return term;
+}
 
+template <typename BigNum, typename Base>
+typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_term(tokens_t& tokens)
+{
+  std::shared_ptr<BigNum> num_ptr = tokens.front().second;
+  node_t res = std::make_shared<NumberNode<BigNum, Base>>(NumberNode<BigNum, Base>(num_ptr));
+  tokens.pop();
+  return res;
+}
 
 template <typename BigNum, typename Base>
 typename ASTFactory<BigNum, Base>::tokens_t ASTFactory<BigNum, Base>::lexer(std::ifstream& in, const Base& b)
