@@ -3,6 +3,8 @@
 #include <ios>
 #include <fstream>
 
+//#include "bin-op-node.hh"
+
 namespace bistro
 {
 /*template <typename BigNum, typename Base>
@@ -47,27 +49,50 @@ typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::read_AST(std
     else
       std::cout << "UNDIFINED ";
   }*/
+  std::cout << "Parse Begin\n";
   auto ast = parse_expr(tokens);
   return ast;
 }
+
+/*template <typename BigNum, typename Base>
+void ASTFactory<BigNum, Base>::eat(tokens_t tokens, Token_id id)
+{
+  auto front_id = std::get<Token_id>(tokens.front());
+  if (front_id != id)
+  {
+    std::stringstream ss;
+    ss << "Grammar error : unexpected " << token_id_name[front_id] << ", expected " << token_id_name[id];
+    throw std::domain_error(ss.str());
+  }
+  tokens.pop();
+}*/
 
 template <typename BigNum, typename Base>
 typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_expr(tokens_t& tokens)
 {
   node_t term = parse_term(tokens); //
-
-  if (std::get<Token_id>(tokens.front()) == PLUS)
-    throw "addition";//eat('+');
-  else if (std::get<Token_id>(tokens.front()) == MINUS)
-    throw "sub"; //eat('-');
-  else
-    return term;
+  auto op = tokens.front().get_id();
+  if (op == token_t::Token_id::PLUS)
+  {
+    token_t::eat(tokens, token_t::Token_id::PLUS);
+    node_t term2 = parse_term(tokens);
+    auto expr = std::make_shared<BinOpNode<BigNum, Base>>(term, term2, op);
+    return expr;
+  }
+  else if (op == token_t::Token_id::MINUS)
+  {
+    token_t::eat(tokens, token_t::Token_id::MINUS);
+    throw std::invalid_argument("Fix ast-factory.hxx parse_expr MINUS");
+  }
+  return term;
+  /*auto expr = BinOpNode(term, term2, op);
+  return expr;*/
 }
 
 template <typename BigNum, typename Base>
 typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_term(tokens_t& tokens)
 {
-  std::shared_ptr<BigNum> num_ptr = tokens.front().second;
+  std::shared_ptr<BigNum> num_ptr = tokens.front().get_num();
   node_t res = std::make_shared<NumberNode<BigNum, Base>>(NumberNode<BigNum, Base>(num_ptr));
   tokens.pop();
   return res;
@@ -83,24 +108,29 @@ typename ASTFactory<BigNum, Base>::tokens_t ASTFactory<BigNum, Base>::lexer(std:
   while (in.eof() == false)
   {
     if (c == '+')
-      tokens.push(token_t(PLUS, nullptr));
+      tokens.push(token_t(token_t::Token_id::PLUS, nullptr));
     else if (c == '-')
-      tokens.push(token_t(MINUS, nullptr));
+      tokens.push(token_t(token_t::Token_id::MINUS, nullptr));
     else if (c == '*')
-      tokens.push(token_t(STAR, nullptr));
+      tokens.push(token_t(token_t::Token_id::STAR, nullptr));
     else if (c == '/')
-      tokens.push(token_t(SLASH, nullptr));
+      tokens.push(token_t(token_t::Token_id::SLASH, nullptr));
     else if (c == '%')
-      tokens.push(token_t(PERCENT, nullptr));
+      tokens.push(token_t(token_t::Token_id::PERCENT, nullptr));
     else if (c == '(')
-      tokens.push(token_t(L_PAR, nullptr));
+      tokens.push(token_t(token_t::Token_id::L_PAR, nullptr));
     else if (c == ')')
-      tokens.push(token_t(R_PAR, nullptr));
+      tokens.push(token_t(token_t::Token_id::R_PAR, nullptr));
     else if (b.is_digit(c))
     {
       in.putback(c);
       auto num = std::make_shared<BigNum>(BigNum(in, b));
-      tokens.push(token_t(NUMBER, num));
+auto base10 = Base({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+    std::cout << "BigNum = \n";
+    num->print(std::cout, base10);
+    std::cout << "\n";
+
+      tokens.push(token_t(token_t::Token_id::NUMBER, num));
     }
     else
     {

@@ -6,7 +6,8 @@ set(CMAKE_C_FLAGS_DEBUG "-g")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
 set(BIN_NAME "bistro")
 
-set(SRC "src/main.cc")
+set(SRC
+    src/main.cc)
 
 include_directories(src)
                     

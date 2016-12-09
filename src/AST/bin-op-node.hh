@@ -1,23 +1,28 @@
 #pragma once
 
-//#include "ast-node.hh"
+#include "ast-node.hh"
+#include "token.hh"
 
 namespace bistro
 {
   template <typename BigNum, typename Base>
-  class NumberNode : public ASTNode<BigNum, Base>
+  class BinOpNode : public ASTNode<BigNum, Base>
   {
   public:
     using base_t = typename ASTNode<BigNum, Base>::base_t;
     using num_t = typename ASTNode<BigNum, Base>::num_t;
+    using op_t = typename Token<BigNum>::Token_id;
+    using node_t = typename ASTNode<BigNum, Base>::node_t;
 
-    NumberNode(num_t num);
+    BinOpNode(node_t expr1, node_t expr2, op_t op);
     std::ostream& print_infix(std::ostream& out, const base_t& b) const;
     num_t eval() const override;
 
   private:
-    num_t num_;
+    node_t expr1_;
+    node_t expr2_;
+    op_t op_;
   };
 }
 
-#include "number-node.hxx"
+#include "bin-op-node.hxx"

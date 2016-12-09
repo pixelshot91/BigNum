@@ -4,7 +4,11 @@
 #include <utility> // pair
 #include <queue>
 
-#include "ast-node.hh"
+#include "token.hh"
+
+//#include "ast-node.hh"
+//#include "AST/number-node.hh"
+//#include "AST/bin-op-node.hh"
 
 namespace bistro
 {
@@ -18,7 +22,7 @@ template <typename BigNum, typename Base>
 class ASTFactory
 {
   public:
-  enum Token_id
+  /*enum Token_id
   {
     NUMBER,
     PLUS,
@@ -29,6 +33,17 @@ class ASTFactory
     L_PAR,
     R_PAR
   };
+  std::string token_id_name[8] =
+  {
+    "number",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "(",
+    ")"
+  };*/
 
   /// BigNum.
   using num_t = BigNum;
@@ -39,7 +54,8 @@ class ASTFactory
   /// Character representation support for a digit.
   using char_t = typename base_t::char_t;
 
-  using token_t = std::pair<Token_id, typename BigNum::self_ptr_t>;
+  //using token_t = std::pair<Token_id, typename BigNum::self_ptr_t>;
+  using token_t = Token<BigNum>;
   using tokens_t = std::queue<token_t>;
 
     /**
@@ -89,11 +105,15 @@ class ASTFactory
   ** \throw std::domain_error if the expression is malformed.
   **/
   node_t read_AST(std::ifstream&, const base_t&);
+  
+ /* void print_token(token_t);
+  void print_op(Token_id op);*/
 
 private:
   tokens_t lexer(std::ifstream& in, const base_t& b);
   node_t parse_expr(tokens_t& tokens);
   node_t parse_term(tokens_t& tokens);
+  //void eat(tokens_t tokens, Token_id id);
 
 };
 }
