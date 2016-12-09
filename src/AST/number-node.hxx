@@ -14,6 +14,14 @@ namespace bistro
     num_->print(out, b);
     return out;
   }
+  template <typename BigNum, typename Base>
+  std::ostream& NumberNode<BigNum, Base>::print_pol(std::ostream& out,
+                                    const base_t& b) const
+  {
+    num_->print(out, b);
+    out << " ";
+    return out;
+  }
 
   template <typename BigNum, typename Base>
   typename NumberNode<BigNum, Base>::num_t NumberNode<BigNum, Base>::eval() const

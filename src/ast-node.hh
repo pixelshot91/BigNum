@@ -34,10 +34,7 @@ public:
                                     const base_t& b) const = 0;
 
   /// Print the tree in polish notation, e.g. "+ 2 3".
-  virtual std::ostream& print_pol(std::ostream&, const base_t&) const
-  {
-    throw "Not implemented";
-  }
+  virtual std::ostream& print_pol(std::ostream&, const base_t&) const = 0;
 
   /// Print the tree in reverse polish notation, e.g. "2 3 +".
   virtual std::ostream& print_rpol(std::ostream&, const base_t&) const

@@ -113,6 +113,7 @@ private:
   tokens_t lexer(std::ifstream& in, const base_t& b);
   node_t parse_expr(tokens_t& tokens);
   node_t parse_term(tokens_t& tokens);
+  node_t parse_factor(tokens_t& tokens);
   //void eat(tokens_t tokens, Token_id id);
 
 };

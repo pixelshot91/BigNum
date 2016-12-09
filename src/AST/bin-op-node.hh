@@ -15,7 +15,8 @@ namespace bistro
     using node_t = typename ASTNode<BigNum, Base>::node_t;
 
     BinOpNode(node_t expr1, node_t expr2, op_t op);
-    std::ostream& print_infix(std::ostream& out, const base_t& b) const;
+    std::ostream& print_infix(std::ostream& out, const base_t& b) const override;
+    std::ostream& print_pol(std::ostream&, const base_t&) const override;
     num_t eval() const override;
 
   private:

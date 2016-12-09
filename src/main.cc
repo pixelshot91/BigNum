@@ -27,14 +27,21 @@ int main(int argc, char* argv[])
 
   std::ifstream in;
   //in.open("calc.ast");
-  in.open("add.ast");
+  in.open(argv[1]);
   if (!in.is_open())
     std::cout << "file not open\n";
   auto factory = bistro::ASTFactory<bignum_t, base_t>{};
   auto base = factory.read_base(in);
   auto ast = factory.read_AST(in, base);
 
-    std::cout << "Build tree\n";
+  std::cerr << "Build tree\n";
+  std::cerr << "Expression is : ";
+  ast->print_infix(std::cout, base);
+  std::cerr << "$\n";
+  std::cerr << "Polish : ";
+  ast->print_pol(std::cout, base);
+  std::cerr << "$\n";
+  
   auto res = ast->eval();
   std::cout << "res = ";
   res->print(std::cout, base);

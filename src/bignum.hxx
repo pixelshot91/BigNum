@@ -77,7 +77,7 @@ void BigNum<T>::set_digit(index_t i, digit_t d)
   if (i >= digits_.size())
     digits_.resize(i + 1, 0);
   digits_[i] = d;
-  std::cout << "digits[" << i << "] = " << digits_[i] << "\n";
+  std::cerr << "digits[" << i << "] = " << digits_[i] << "\n";
   shrink();
 }
 
@@ -140,7 +140,7 @@ typename BigNum<T>::self_t BigNum<T>::operator+(const self_t& other) const
   }
   else // N + P
   {
-    std::cout << "N + P -> -(|N| - P)\n";
+    std::cerr << "N + P -> -(|N| - P)\n";
     BigNum result = raw_sub(other);
     result.positive_ = !result.positive_;
     return result;
@@ -150,11 +150,12 @@ typename BigNum<T>::self_t BigNum<T>::operator+(const self_t& other) const
 template <typename T>
 typename BigNum<T>::self_t BigNum<T>::operator-(const self_t& other) const
 {
+  std::cerr << "operaor-\n";
   check_same_base(other);
   if (positive_ == other.positive_)
   {
     BigNum result = raw_sub(other);
-    if (positive_)
+    if (!positive_)
       result.positive_ = !result.positive_;
     return result;
   }
@@ -232,13 +233,13 @@ typename BigNum<T>::self_t BigNum<T>::raw_sub(const self_t& other) const
     std::cout << "this <= other\n";*/
   const BigNum& n1 = (this->abs() > other.abs()) ? *this : other;
   const BigNum& n2 = (this->abs() > other.abs()) ? other : *this;
-  std::cout << "\nn1 = ";
+  std::cerr << "\nn1 = ";
   for (auto i : n1.digits_)
-    std::cout << i << " ";
-  std::cout << "\nn2 = ";
+    std::cerr << i << " ";
+  std::cerr << "\nn2 = ";
   for (auto i : n2.digits_)
-    std::cout << i << " ";
-  std::cout << "\n";
+    std::cerr << i << " ";
+  std::cerr << "\n";
   bool carry = false;
   auto max_len = std::max<size_t>(digits_.size(), other.digits_.size());
   BigNum res(base_);
@@ -271,11 +272,10 @@ bool BigNum<T>::operator>(const self_t& other) const
   if (base_ != other.base_)
     throw std::invalid_argument(
       "Try to compare two BigNum expressed in different base");
-  /*if (get_num_digits() == 0 && other.get_num_digits() == 0)
-    return false;*/
+  if (digits_.size() == 0 && other.digits_.size() == 0)
+    return false;
   if (is_positive() != other.is_positive())
     return is_positive();
-  //std::cout << "Compare >\n";
   if (get_num_digits() != other.get_num_digits())
   {
     if (get_num_digits() > other.get_num_digits())
@@ -285,7 +285,6 @@ bool BigNum<T>::operator>(const self_t& other) const
   ssize_t i;
   for (i = digits_.size(); i >= 0 && digits_[i] == other.digits_[i]; --i)
     continue;
-  //std::cout << "compareing " << digits_[i] << " and " << other.digits_[i] << "\n";
   if (i >= 0 && digits_[i] > other.digits_[i])
     return true;
   return false;

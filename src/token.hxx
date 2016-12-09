@@ -51,8 +51,7 @@ std::ostream& Token<BigNum>::print_op(std::ostream& out, Token_id op)
       ")"
     };
 
-
-  out << "\nid = " << token_id_name[op] << "\n";
+  out << token_id_name[op];
   return out; 
 }
 

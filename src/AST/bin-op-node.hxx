@@ -16,25 +16,40 @@ namespace bistro
     expr2_->print_infix(out, b);
     return out;
   }
+  template <typename BigNum, typename Base>
+  std::ostream& BinOpNode<BigNum, Base>::print_pol(std::ostream& out, const base_t& b) const
+  {
+    Token<BigNum>::print_op(out, op_);
+    out << " ";
+    expr1_->print_pol(out, b);
+    expr2_->print_pol(out, b);
+    return out;
+  }
 
   template <typename BigNum, typename Base>
   typename BinOpNode<BigNum, Base>::num_t BinOpNode<BigNum, Base>::eval() const
   {
-    std::cout << "BinOpNode eval\n";
+    std::cerr << "BinOpNode eval\n";
     auto base10 = Base({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
     BigNum left = expr1_->eval()->clone();
-    std::cout << "left = ";
-    left.print(std::cout, base10);
-    std::cout << "\nright = ";
+    std::cerr << "left = ";
+    left.print(std::cerr, base10);
+    std::cerr << "\nright = ";
 
     BigNum right = expr2_->eval()->clone();
-    right.print(std::cout, base10);
-    std::cout << "\n";
+    right.print(std::cerr, base10);
+    std::cerr << "\n";
     //BigNum res = left + right;
-    auto res = std::make_shared<BigNum>(left + right); // Change to op
-    std::cout << "\nres = \n";
-    res->print(std::cout, base10);
-    return res;
+    if (op_ == Token<BigNum>::Token_id::PLUS)
+      return std::make_shared<BigNum>(left + right);
+    else if (op_ == Token<BigNum>::Token_id::MINUS)
+      return std::make_shared<BigNum>(left - right);
+    else
+      throw std::invalid_argument("Operator not handled");
+    /*auto res = std::make_shared<BigNum>(left + right); // Change to op
+    std::cerr << "\nres = \n";
+    res->print(std::cerr, base10);
+    return res;*/
   }
 }
 

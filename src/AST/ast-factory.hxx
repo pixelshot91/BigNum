@@ -43,13 +43,13 @@ typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::read_AST(std
   /*for (auto t : tokens)
   {
     if (t.first == NUMBER)
-      std::cout << "number ";
+      std::cerr << "number ";
     else if (t.first == PLUS)
-      std::cout << "PLUS ";
+      std::cerr << "PLUS ";
     else
-      std::cout << "UNDIFINED ";
+      std::cerr << "UNDIFINED ";
   }*/
-  std::cout << "Parse Begin\n";
+  std::cerr << "Parse Begin\n";
   auto ast = parse_expr(tokens);
   return ast;
 }
@@ -75,22 +75,44 @@ typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_expr(t
   if (op == token_t::Token_id::PLUS)
   {
     token_t::eat(tokens, token_t::Token_id::PLUS);
-    node_t term2 = parse_term(tokens);
+    node_t term2 = parse_expr(tokens);
     auto expr = std::make_shared<BinOpNode<BigNum, Base>>(term, term2, op);
     return expr;
   }
   else if (op == token_t::Token_id::MINUS)
   {
     token_t::eat(tokens, token_t::Token_id::MINUS);
-    throw std::invalid_argument("Fix ast-factory.hxx parse_expr MINUS");
+    node_t term2 = parse_expr(tokens);
+    auto expr = std::make_shared<BinOpNode<BigNum, Base>>(term, term2, op);
+    return expr;
   }
   return term;
-  /*auto expr = BinOpNode(term, term2, op);
-  return expr;*/
 }
 
 template <typename BigNum, typename Base>
 typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_term(tokens_t& tokens)
+{
+  node_t term = parse_factor(tokens); //
+  auto op = tokens.front().get_id();
+  if (op == token_t::Token_id::STAR)
+  {
+    token_t::eat(tokens, token_t::Token_id::STAR);
+    node_t term2 = parse_term(tokens);
+    auto expr = std::make_shared<BinOpNode<BigNum, Base>>(term, term2, op);
+    return expr;
+  }
+  else if (op == token_t::Token_id::SLASH)
+  {
+    token_t::eat(tokens, token_t::Token_id::SLASH);
+    node_t term2 = parse_term(tokens);
+    auto expr = std::make_shared<BinOpNode<BigNum, Base>>(term, term2, op);
+    return expr;
+  }
+  return term;
+}
+
+template <typename BigNum, typename Base>
+typename ASTFactory<BigNum, Base>::node_t ASTFactory<BigNum, Base>::parse_factor(tokens_t& tokens)
 {
   std::shared_ptr<BigNum> num_ptr = tokens.front().get_num();
   node_t res = std::make_shared<NumberNode<BigNum, Base>>(NumberNode<BigNum, Base>(num_ptr));
@@ -126,9 +148,9 @@ typename ASTFactory<BigNum, Base>::tokens_t ASTFactory<BigNum, Base>::lexer(std:
       in.putback(c);
       auto num = std::make_shared<BigNum>(BigNum(in, b));
 auto base10 = Base({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
-    std::cout << "BigNum = \n";
-    num->print(std::cout, base10);
-    std::cout << "\n";
+    std::cerr << "BigNum = \n";
+    num->print(std::cerr, base10);
+    std::cerr << "\n";
 
       tokens.push(token_t(token_t::Token_id::NUMBER, num));
     }
